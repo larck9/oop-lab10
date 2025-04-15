@@ -1,11 +1,6 @@
 package it.unibo.oop.lab.lambda;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -61,10 +56,19 @@ public final class LambdaUtilities {
      *         otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
+        final List<Optional<T>> l = new ArrayList<>(list.size());
+        list.forEach(i->{
+            if(pre.test(i)){
+                l.add(Optional.of(i));
+            }else{
+                l.add(Optional.empty());
+            }
+
+        });
         /*
          * Suggestion: consider Optional.filter
          */
-        return emptyList();
+        return l;
     }
 
     /**
@@ -83,7 +87,11 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Map.merge
          */
-        return emptyMap();
+        final Map<R, Set<T>> m =new HashMap<>(list.size());
+        list.forEach(i->{
+            m.computeIfAbsent(op.apply(i),k->new HashSet<T>()).add(i);
+        });
+        return m;
     }
 
     /**
@@ -104,7 +112,11 @@ public final class LambdaUtilities {
          *
          * Keep in mind that a map can be iterated through its forEach method
          */
-        return emptyMap();
+        Map<K, V> m= new HashMap<>(map.size());
+        map.forEach((i,j)->{
+            m.put(i,j.orElse(def.get()));
+        });
+        return m;
     }
 
     /**
