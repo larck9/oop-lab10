@@ -1,21 +1,33 @@
 package it.unibo.mvc;
 
 
+import java.io.*;
+import java.nio.file.FileSystems;
+import java.util.List;
+
 /**
  * Encapsulates the concept of configuration.
  */
 public final class Configuration {
-
-    private final int max; 
+    private final int max;
     private final int min;
     private final int attempts;
 
-    private Configuration(final int max, final int min, final int attempts) {
+    private Configuration(final int min, final int max, final int attempts) {
         this.max = max;
         this.min = min;
         this.attempts = attempts;
     }
-
+    public static Configuration fromYML(){
+        List<Integer> res;
+        try(InputStream input=Configuration.class.getClassLoader().getResourceAsStream("config.yml");
+            BufferedReader r=new BufferedReader(new InputStreamReader(input))){
+            res=r.lines().map(i->i.split(": ")).map(i->i[1]).map(Integer::parseInt).toList();
+        } catch (IOException e) {
+            return new Builder().build();
+        }
+        return new Configuration(res.get(0),res.get(1),res.get(2));
+    }
     /**
      * @return the maximum value
      */
@@ -109,6 +121,12 @@ public final class Configuration {
             consumed = true;
             return new Configuration(max, min, attempts);
         }
+    }
+
+    public static void main(String[] args){
+        System.out.println(Configuration.fromYML().getMax());
+        System.out.println(Configuration.fromYML().getMin());
+        System.out.println(Configuration.fromYML().getAttempts());
     }
 }
 

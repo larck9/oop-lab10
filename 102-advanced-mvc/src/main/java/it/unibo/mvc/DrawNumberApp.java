@@ -1,16 +1,19 @@
 package it.unibo.mvc;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.FileNotFoundException;
+
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
-
+    private static final String SEP=FileSystems.getDefault().getSeparator();
+    private static final String HOME= System.getProperty("user.home");
+    private static final String PATH_CONFIG=HOME+SEP+"Desktop"+SEP+"programmazioneaoggetti"+SEP+"es lab"+SEP+"oop-lab10"+SEP+"102-advanced-mvc"+SEP+"src"+SEP+"main"+SEP+"resources"+SEP+"config.yml";
     private final DrawNumber model;
     private final List<DrawNumberView> views;
 
@@ -27,7 +30,7 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
             view.setObserver(this);
             view.start();
         }
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
+        this.model = new DrawNumberImpl(Configuration.fromYML());
     }
 
     @Override
@@ -66,7 +69,7 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * @throws FileNotFoundException 
      */
     public static void main(final String... args) throws FileNotFoundException {
-        new DrawNumberApp(new DrawNumberViewImpl());
+        new DrawNumberApp(new DrawNumberViewImpl(),new DrawNumberViewImpl(),new PrintStreamView(System.out));
     }
 
 }
